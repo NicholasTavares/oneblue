@@ -6,12 +6,13 @@ import {
   Route,
   Routes,
 } from "react-router-dom";
+import { isAuthenticated } from "../auth/isAuthenticated";
 import Home from "../pages/Home/Index";
 import Login from "../pages/Login/Index";
 import Register from "../pages/Register/Index";
 
 const ProtectedRoutes: React.FunctionComponent = () => {
-  return false ? <Outlet /> : <Navigate to="/" />;
+  return isAuthenticated() ? <Outlet /> : <Navigate to="/" />;
 };
 
 const SystemRoutes: React.FunctionComponent = () => (
