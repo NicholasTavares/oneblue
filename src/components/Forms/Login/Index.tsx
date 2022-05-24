@@ -12,6 +12,8 @@ import {
 } from "./styles";
 import shemaLogin from "./shemaLogin";
 import { BsArrowRight } from "react-icons/bs";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 interface IMyFormValues {
   name: string;
@@ -21,13 +23,24 @@ interface IMyFormValues {
 const LoginForm: React.FunctionComponent = () => {
   const initialValues: IMyFormValues = { name: "", password: "" };
   const year = new Date().getFullYear();
+  const URL = "http://localhost:4000";
+  const navigate = useNavigate();
   return (
     <Formik
       initialValues={initialValues}
-      onSubmit={(values, actions) => {
-        console.log({ values, actions });
-        alert(JSON.stringify(values, null, 2));
-        actions.setSubmitting(false);
+      onSubmit={async (values, actions) => {
+        await axios
+          .post(`${URL}/login`, {
+            name: values.name,
+            password: values.password,
+          })
+          .then(function (response) {
+            localStorage.setItem("@user", JSON.stringify(response.data));
+            navigate("/home");
+          })
+          .catch(function (error) {
+            actions.setFieldError("password", error.response.data.why);
+          });
       }}
       validationSchema={shemaLogin}
       validateOnMount
